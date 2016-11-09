@@ -67,15 +67,20 @@ def calculateError(fileName, perceptron, phi, target):
         cnt += 1
     return error/cnt
 
+def classify(perceptrons):
+    #hier entsteht bald eine Funktion
+    return
+
 if __name__ == "__main__":
-    #auf welche Zahl soll trainiert werden?
-    target = 0
-    #initialiseren das Perceptron mit der Anzahl der features und der Zahl auf die traniert werden soll
-    p = Perceptron(2,target)
-    phi = transform
+    rphi = transform
     fileName = "mnist_first_batch.csv"
     iterator = getNextPic(fileName)
-    p.learnIteratorDataset(getNextPic, fileName, transform, maxIterations=10)
-    print(calculateError(fileName, p, phi,target)*100,'%')
-    
+    perceptrons = []
+    for target in range(10):
+        #initialiseren das Perceptron mit der Anzahl der features und der Zahl auf die traniert werden soll
+        exec("p"+str(target)+" = Perceptron(2,"+str(target)+")")
+        exec("p"+str(target)+".learnIteratorDataset(getNextPic, fileName, transform, maxIterations=1)")
+        exec("perceptrons.append(p"+str(target)+")")
+    exec("print(calculateError(fileName, p"+str(target)+", phi,target)*100,'%')")
+
     
