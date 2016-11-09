@@ -25,8 +25,9 @@ def quadratic(x,a,b,c):
         return 1
 
 class Perceptron:
-    def __init__(self, dim):
+    def __init__(self, dim,target):
         self.w = np.random.rand(dim+1)
+        self.target = target
 #        self.w = np.zeros(dim+1)
     def classify(self, x):
         x = np.insert(x, 0, 1)
@@ -70,7 +71,12 @@ class Perceptron:
             iterations += 1
             it = iterator(fileName)
             for el in it:
-                noAdapt = self.learn(phi(el[0]), el[1])
+                if not el[1] == self.target:
+                    y = 0
+                else:
+                    y = 1
+
+                noAdapt = self.learn(phi(el[0]), y)
                 done = done and noAdapt
                 if(not noAdapt):
                     cnt += 1
