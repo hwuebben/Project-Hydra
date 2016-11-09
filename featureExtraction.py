@@ -1,6 +1,6 @@
 import numpy as np
 
-class feature_extraction:
+class featureExtraction:
 
     def calcVarX(pic):
         distribution = np.zeros(np.shape(pic)[0])
