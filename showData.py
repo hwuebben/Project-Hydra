@@ -45,7 +45,7 @@ def plotDigits(fileName, rows, cols, offset=0):
     iterator = getNextPic(fileName)
     # Skip the desired offset in file
     for i in range(offset):
-        pic,_ = iterator.next()
+        pic,_ = next(iterator)
     fig, axarr = plt.subplots(rows, cols)
     for row in axarr:
         for i in range(cols):
