@@ -9,7 +9,7 @@ from __future__ import division
 import numpy as np
 import csv
 from perceptron import Perceptron
-from feature_extraction import *
+from featureExtraction import *
 
 """
 Iterator that yields all training data line-wise
@@ -66,7 +66,7 @@ if __name__ == "__main__":
     iterator = getNextPic(fileName)
     for x,y in iterator:
 
-        print(feature_extraction.calcVarX(x))
+        print(featureExtraction.calcVarX(x))
         break
     #p.learnIteratorDataset(getNextPic, fileName, transform, maxIterations=1)
     #print(calculateError(fileName, p, phi)*100,'%')
