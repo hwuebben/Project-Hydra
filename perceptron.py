@@ -41,6 +41,7 @@ class Perceptron:
     #         True if the perceptron already produced the correct output value, i.e. no adaptation has been performed
     def learn(self, x, y):
         x, yh = self.classify(x)
+
         if(int(y) != int(yh)):
             self.w += y*x
             return False
@@ -71,11 +72,10 @@ class Perceptron:
             iterations += 1
             it = iterator(fileName)
             for el in it:
-                if not el[1] == self.target:
-                    y = 0
+                if int(el[1]) != self.target:
+                    y = -1
                 else:
                     y = 1
-
                 noAdapt = self.learn(phi(el[0]), y)
                 done = done and noAdapt
                 if(not noAdapt):
