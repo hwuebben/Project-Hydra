@@ -39,7 +39,12 @@ Dummy transformation function (phi(x)) that just calculates the sum of all pixel
 @return The input vector in the phi-space
 """
 def transform(rawData):
-    return [featureExtraction.calcVarX(rawData),featureExtraction.calcVarY(rawData)]
+    fe = featureExtraction(rawData)
+    features = []
+    features.extend(fe.calcVar())
+    features.extend(fe.calcMinMax())
+
+    return features
 
 """
 Calculate the error on a dataset as percentage wrong classified
@@ -48,39 +53,48 @@ Calculate the error on a dataset as percentage wrong classified
 @param phi The transformation function (phi(x))
 @return The error percentage
 """
-def calculateError(fileName, perceptron, phi, target):
+def calculateError(fileName, perceptrons, phi):
     iterator = getNextPic(fileName)
     error = 0
     cnt = 0
     for x, y in iterator:
-        _, yh = perceptron.classify(phi(x))
-        yh = int(yh)
-        y = int(y)
-        if y != target:
-            y = -1
-        else:
-            y = 1
-
+        yh = classify(perceptrons,phi,x)
         print(y, yh)
         if y != yh:
             error += 1
         cnt += 1
     return error/cnt
 
-def classify(perceptrons):
-    #hier entsteht bald eine Funktion
-    return
+def classify(perceptrons, phi, x):
+    maxClassValue = -1
+    for y,perceptron in enumerate(perceptrons):
+        _, yh = perceptron.classify(phi(x))
+        classValue = perceptron.getClassValue()
+        if classValue >= maxClassValue:
+            maxClassValue = classValue
+            classification = y
+    return classification
+
+
+
+
+
+
 
 if __name__ == "__main__":
-    rphi = transform
+    phi = transform
     fileName = "mnist_first_batch.csv"
     iterator = getNextPic(fileName)
     perceptrons = []
+    #dreckiger trick um die ANzahl der Dimensionen nicht manuell eingeben zu muessen:
+    nrDimensions = len(transform(np.arange(9).reshape(3,3)))
     for target in range(10):
         #initialiseren das Perceptron mit der Anzahl der features und der Zahl auf die traniert werden soll
-        exec("p"+str(target)+" = Perceptron(2,"+str(target)+")")
+        exec("p"+str(target)+" = Perceptron(nrDimensions,"+str(target)+")")
+        print ("trainiere naechstes Perzeptron")
         exec("p"+str(target)+".learnIteratorDataset(getNextPic, fileName, transform, maxIterations=1)")
         exec("perceptrons.append(p"+str(target)+")")
-    exec("print(calculateError(fileName, p"+str(target)+", phi,target)*100,'%')")
+    print("training fertig")
+    print(calculateError(fileName, perceptrons, phi)*100,'%')
 
     

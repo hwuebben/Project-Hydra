@@ -25,13 +25,17 @@ def quadratic(x,a,b,c):
         return 1
 
 class Perceptron:
+
     def __init__(self, dim,target):
         self.w = np.random.rand(dim+1)
         self.target = target
 #        self.w = np.zeros(dim+1)
     def classify(self, x):
         x = np.insert(x, 0, 1)
-        return x, np.sign(np.dot(self.w, x))
+        self.classValue = np.dot(self.w, x)
+        return x, np.sign(self.classValue)
+    def getClassValue(self):
+        return self.classValue
     
     # Perform a learning step for a given training datum with input values x
     # and output value y in {-1,1}
@@ -67,6 +71,7 @@ class Perceptron:
         done = False
         cnt = 0
         iterations = 0
+        self.pocketError = np.inf
         while(not done and iterations < maxIterations):
             done = True
             iterations += 1
@@ -80,7 +85,42 @@ class Perceptron:
                 done = done and noAdapt
                 if(not noAdapt):
                     cnt += 1
+            #schaetze den Fehler ab, indem er nur ueber die ersten nrData Daten berehnet wird
+            nrData = np.inf
+            currentError = self.estimateError(iterator, fileName, phi,nrData)
+            #print(self.w," ",currentError," ",cnt)
+            if currentError < self.pocketError:
+                #print("found better weights: ",self.w)
+                self.putPocket(currentError)
+        #nach dem lernen: setze w auf das pocketW:
+        self.getPocket()
         return cnt
+    def putPocket(self,pocketError):
+        self.pocketW = self.w
+        self.pocketError = pocketError
+    def getPocket(self):
+        self.w = self.pocketW
+
+    def estimateError(self, iterator, fileName, phi,nrData):
+        iterator = iterator(fileName)
+        error = 0
+        cnt = 0
+        for x, y in iterator:
+            _, yh = self.classify(phi(x))
+            yh = int(yh)
+            y = int(y)
+            if y != self.target:
+                y = -1
+            else:
+                y = 1
+
+            if y != yh:
+                error += 1
+            cnt += 1
+            #falls der Fehler schon groeßer ist: aufhoeren!
+            if error > self.pocketError or cnt > nrData:
+                break
+        return error
 
     def plot(self, pts=None, mini=-1, maxi=1, res=500):
         font = {'family' : 'serif',\
