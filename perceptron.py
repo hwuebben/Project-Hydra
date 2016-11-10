@@ -47,7 +47,9 @@ class Perceptron:
         x, yh = self.classify(x)
 
         if(int(y) != int(yh)):
-            self.w += y*x
+            #lernrate:
+            nu = 0.5
+            self.w += nu*(y-self.classValue)*x
             return False
         return True
 
