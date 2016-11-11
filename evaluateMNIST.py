@@ -43,6 +43,7 @@ def transform(rawData):
     features = []
     features.extend(fe.calcVar())
     features.extend(fe.calcMinMax())
+    features.extend(fe.normalizedDists())
 
     return features
 
@@ -57,15 +58,26 @@ def calculateError(fileName, perceptrons, phi):
     iterator = getNextPic(fileName)
     error = 0
     cnt = 0
+    errors = np.zeros(10)
+    nrSamples = np.zeros(10)
+    nrClass = np.zeros(10)
     for x, y in iterator:
-        yh = classify(perceptrons,phi,x)
-        print(y, yh)
+        nrSamples[y] += 1
+        yh = classify(perceptrons,phi,x,y)
+        nrClass[yh] += 1
         if y != yh:
+            errors[y]+= 1
             error += 1
         cnt += 1
+    print(errors)
+    print(nrSamples)
+    print(nrClass)
+    for y,e in enumerate(errors):
+        print("Fehlerquote fuer ",y,": ",errors[y]/nrSamples[y])
+
     return error/cnt
 
-def classify(perceptrons, phi, x):
+def classify(perceptrons, phi, x,realy):
     maxClassValue = -1
     for y,perceptron in enumerate(perceptrons):
         _, yh = perceptron.classify(phi(x))
@@ -73,6 +85,8 @@ def classify(perceptrons, phi, x):
         if classValue >= maxClassValue:
             maxClassValue = classValue
             classification = y
+        #if(y == realy):
+            #print("Wert fuer richtiges P: ",classValue)
     return classification
 
 
@@ -87,12 +101,13 @@ if __name__ == "__main__":
     iterator = getNextPic(fileName)
     perceptrons = []
     #dreckiger trick um die ANzahl der Dimensionen nicht manuell eingeben zu muessen:
-    nrDimensions = len(transform(np.arange(9).reshape(3,3)))
+    nrDimensions = len(transform(np.arange(25).reshape(5,5)))
+    maxIterations = 10
     for target in range(10):
         #initialiseren das Perceptron mit der Anzahl der features und der Zahl auf die traniert werden soll
         exec("p"+str(target)+" = Perceptron(nrDimensions,"+str(target)+")")
         print ("trainiere naechstes Perzeptron")
-        exec("p"+str(target)+".learnIteratorDataset(getNextPic, fileName, transform, maxIterations=1)")
+        exec("p"+str(target)+".learnIteratorDataset(getNextPic, fileName, transform, maxIterations)")
         exec("perceptrons.append(p"+str(target)+")")
     print("training fertig")
     print(calculateError(fileName, perceptrons, phi)*100,'%')

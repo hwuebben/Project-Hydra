@@ -43,6 +43,53 @@ class featureExtraction:
 
         return [rpMaxX,rpMaxY,rpMinX,rpMinY]
 
+    def normalizedDists(self):
+
+        distributionX = self.distributionX[np.nonzero(self.distributionX)]
+        distributionX = np.divide(distributionX,np.max(distributionX))
+
+
+        sumX = np.sum(distributionX)
+        lenX = len(distributionX)
+        nrParts = 5
+        startIndex = 0
+        stopIndex = int(lenX/nrParts)
+        nrAdditional = lenX % nrParts
+        normDistsX = []
+        for i in range(nrParts):
+            if nrAdditional > 0:
+                stopIndex += 1
+                nrAdditional -= 1
+            partSum = np.sum(distributionX[startIndex:stopIndex])
+            normDistsX.append(partSum / sumX)
+            startIndex = stopIndex
+            stopIndex += int(lenX/nrParts)
+
+        distributionY = self.distributionY[np.nonzero(self.distributionY)]
+        distributionY = np.divide(distributionY,np.max(distributionY))
+
+        sumY = np.sum(distributionY)
+        lenY = len(distributionY)
+        nrParts = 5
+        startIndex = 0
+        stopIndex = int(lenY / nrParts)
+        nrAdditional = lenY % nrParts
+        normDistsY = []
+        for i in range(nrParts):
+            if nrAdditional > 0:
+                stopIndex += 1
+                nrAdditional -= 1
+            partSum = np.sum(distributionY[startIndex:stopIndex])
+            normDistsY.append(partSum / sumY)
+            startIndex = stopIndex
+            stopIndex += int(lenY / nrParts)
+        normDists = []
+        normDists.extend(normDistsX)
+        normDists.extend(normDistsY)
+
+        return normDists
+
+
     """
     gebe Eckpositionen des kleinsten Rechteckes um die Zahl aus
     """

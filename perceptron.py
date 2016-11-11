@@ -48,7 +48,7 @@ class Perceptron:
 
         if(int(y) != int(yh)):
             #lernrate:
-            nu = 0.5
+            nu = 0.01
             self.w += nu*(y-self.classValue)*x
             return False
         return True
@@ -87,23 +87,25 @@ class Perceptron:
                 done = done and noAdapt
                 if(not noAdapt):
                     cnt += 1
-            #schaetze den Fehler ab, indem er nur ueber die ersten nrData Daten berehnet wird
-            nrData = np.inf
-            currentError = self.estimateError(iterator, fileName, phi,nrData)
+
+            currentError,currentErrorRel = self.calcError(iterator, fileName, phi)
             #print(self.w," ",currentError," ",cnt)
             if currentError < self.pocketError:
                 #print("found better weights: ",self.w)
-                self.putPocket(currentError)
+                self.putPocket(currentError,currentErrorRel)
+        print("bester relativer P",self.target,": ",self.pocketErrorRel)
+        print("bestes w P",self.target,": ",self.pocketW)
         #nach dem lernen: setze w auf das pocketW:
         self.getPocket()
         return cnt
-    def putPocket(self,pocketError):
+    def putPocket(self,pocketError,pocketErrorRel):
         self.pocketW = self.w
         self.pocketError = pocketError
+        self.pocketErrorRel = pocketErrorRel
     def getPocket(self):
         self.w = self.pocketW
 
-    def estimateError(self, iterator, fileName, phi,nrData):
+    def calcError(self, iterator, fileName, phi):
         iterator = iterator(fileName)
         error = 0
         cnt = 0
@@ -120,9 +122,10 @@ class Perceptron:
                 error += 1
             cnt += 1
             #falls der Fehler schon groeßer ist: aufhoeren!
-            if error > self.pocketError or cnt > nrData:
+            if error > self.pocketError:
                 break
-        return error
+        errorRel = error / cnt
+        return [error,errorRel]
 
     def plot(self, pts=None, mini=-1, maxi=1, res=500):
         font = {'family' : 'serif',\
