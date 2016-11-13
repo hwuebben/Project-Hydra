@@ -25,33 +25,32 @@ class featureExtraction:
     distribtionen bezogen auf das kleinste Rechteck
     """
     def calcMinMax(self):
-        cbl, cbr, cul, cur = self.calcRectangle()
+        x0, x1, y0, y1 = self.calcRectangle()
         #print("a: ",cbl, cbr, cul, cur)
         argMaxX = np.argmax(self.distributionX)
         argMaxY = np.argmax(self.distributionY)
         #print("b: ", argMaxX,argMaxY)
         #relative position der maxima:
-        rpMaxX = (argMaxX - cbl) / cbr
-        rpMaxY = (argMaxY - cul) / cur
+        rpMaxX = (argMaxX - x0) / (x1-x0)
+        rpMaxY = (argMaxY - y0) / (y1-y0)
 
         argMinX = np.argmin(self.distributionX)
         argMinY = np.argmin(self.distributionY)
         #print("c: ", argMinX, argMinY)
         #relative position der minima:
-        rpMinX = (argMinX - cbl) / cbr
-        rpMinY = (argMinY - cul) / cur
+        rpMinX = (argMinX - x0) / (x1-x0)
+        rpMinY = (argMinY - y0) / (y1-y0)
 
         return [rpMaxX,rpMaxY,rpMinX,rpMinY]
 
-    def normalizedDists(self):
+    def normalizedDists(self,nrParts):
 
         distributionX = self.distributionX[np.nonzero(self.distributionX)]
-        distributionX = np.divide(distributionX,np.max(distributionX))
+        #distributionX = np.divide(distributionX,np.max(distributionX))
 
 
         sumX = np.sum(distributionX)
         lenX = len(distributionX)
-        nrParts = 5
         startIndex = 0
         stopIndex = int(lenX/nrParts)
         nrAdditional = lenX % nrParts
@@ -66,11 +65,10 @@ class featureExtraction:
             stopIndex += int(lenX/nrParts)
 
         distributionY = self.distributionY[np.nonzero(self.distributionY)]
-        distributionY = np.divide(distributionY,np.max(distributionY))
+        #distributionY = np.divide(distributionY,np.max(distributionY))
 
         sumY = np.sum(distributionY)
         lenY = len(distributionY)
-        nrParts = 5
         startIndex = 0
         stopIndex = int(lenY / nrParts)
         nrAdditional = lenY % nrParts
@@ -88,6 +86,9 @@ class featureExtraction:
         normDists.extend(normDistsY)
 
         return normDists
+    def numberDensity(self):
+        return
+
 
 
     """
@@ -96,15 +97,15 @@ class featureExtraction:
     def calcRectangle(self):
         nzX = np.nonzero(self.distributionX)
         #untere linke Ecke:
-        cbl = nzX[0][0]
+        x0 = nzX[0][0]
         #untere rechte Ecke:
-        cbr = nzX[0][-1]
+        x1 = nzX[0][-1]
         nzY = np.nonzero(self.distributionY)
         #untere linke Ecke:
-        cul = nzY[0][0]
+        y0 = nzY[0][0]
         #untere rechte Ecke:
-        cur = nzY[0][-1]
-        return [cbl,cbr,cul,cur]
+        y1 = nzY[0][-1]
+        return [x0,x1,y0,y1]
 
 
 

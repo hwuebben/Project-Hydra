@@ -43,7 +43,7 @@ def transform(rawData):
     features = []
     features.extend(fe.calcVar())
     features.extend(fe.calcMinMax())
-    features.extend(fe.normalizedDists())
+    features.extend(fe.normalizedDists(10))
 
     return features
 
@@ -78,7 +78,7 @@ def calculateError(fileName, perceptrons, phi):
     return error/cnt
 
 def classify(perceptrons, phi, x,realy):
-    maxClassValue = -1
+    maxClassValue = -np.inf
     for y,perceptron in enumerate(perceptrons):
         _, yh = perceptron.classify(phi(x))
         classValue = perceptron.getClassValue()
@@ -102,7 +102,7 @@ if __name__ == "__main__":
     perceptrons = []
     #dreckiger trick um die ANzahl der Dimensionen nicht manuell eingeben zu muessen:
     nrDimensions = len(transform(np.arange(25).reshape(5,5)))
-    maxIterations = 10
+    maxIterations = 12
     for target in range(10):
         #initialiseren das Perceptron mit der Anzahl der features und der Zahl auf die traniert werden soll
         exec("p"+str(target)+" = Perceptron(nrDimensions,"+str(target)+")")

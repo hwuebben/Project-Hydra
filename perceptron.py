@@ -27,8 +27,10 @@ def quadratic(x,a,b,c):
 class Perceptron:
 
     def __init__(self, dim,target):
-        self.w = np.random.rand(dim+1)
+        self.w = np.random.rand(dim+1) -0.5
         self.target = target
+        self.allowedRelChange = 10
+        self.nu = 1
 #        self.w = np.zeros(dim+1)
     def classify(self, x):
         x = np.insert(x, 0, 1)
@@ -47,9 +49,18 @@ class Perceptron:
         x, yh = self.classify(x)
 
         if(int(y) != int(yh)):
-            #lernrate:
-            nu = 0.01
-            self.w += nu*(y-self.classValue)*x
+            # oldW = np.copy(self.w)
+            self.w += self.nu*(y-self.classValue)*x
+
+            # for i,we in enumerate(oldW):
+            #     change = abs(we - self.w[i])
+            #     allowedChange = abs(we - we*(1+self.allowedRelChange))
+            #     if change > allowedChange:
+            #         if we < self.w[i]:
+            #             self.w[i] = we + allowedChange
+            #         else:
+            #             self.w[i] = we - allowedChange
+
             return False
         return True
 
@@ -87,8 +98,11 @@ class Perceptron:
                 done = done and noAdapt
                 if(not noAdapt):
                     cnt += 1
+            self.allowedRelChange /= 2
+            self.nu /= 2
 
             currentError,currentErrorRel = self.calcError(iterator, fileName, phi)
+            print("currentErrorRel P", self.target, ": ", currentErrorRel)
             #print(self.w," ",currentError," ",cnt)
             if currentError < self.pocketError:
                 #print("found better weights: ",self.w)
