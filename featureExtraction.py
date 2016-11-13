@@ -1,15 +1,34 @@
 import numpy as np
 
-class featureExtraction:
+class FeatureExtraction:
 
-    def __init__(self, pic):
-        self.distributionX = np.zeros(np.shape(pic)[0])
-        self.distributionY = np.zeros(np.shape(pic)[0])
+    def __init__(self, length=28):
 
-        for i in range(np.shape(pic)[0]):
-            self.distributionX[i] = np.sum(pic[i,:])
-            self.distributionY[i] = np.sum(pic[:, i])
+        self.len = length
 
+        self.distributionX = np.zeros(self.len)
+        self.distributionY = np.zeros(self.len)
+
+        # add your feature function here
+        self.features = [self.calcVar, self.calcMinMax, self.normalizedDists]
+
+        # add length of return vector of your feature function
+        self.return_length = 1 + 2 + 4 + 10
+
+    def init_pic(self, picture):
+        for i in range(self.len):
+            self.distributionX[i] = np.sum(picture[i, :])
+            self.distributionY[i] = np.sum(picture[:, i])
+
+    def get_train_data(self, picture):
+        self.init_pic(picture)
+
+        # add constant value to data set to match constant in weight vector
+        data = [1]
+        # TODO optimize with multiprocessing?
+        for f in self.features:
+            data.extend(f())
+        return data
 
 
     def calcVar(self):

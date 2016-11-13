@@ -18,22 +18,35 @@ def func(x, a, b):
     else:
         return 1
 
-def quadratic(x,a,b,c):
+
+def quadratic(x, a, b, c):
     if a+b*x[0]+c*x[0]**2 < x[1]:
         return -1
     else:
         return 1
 
+
 class Perceptron:
 
-    def __init__(self, dim,target):
-        self.w = np.random.rand(dim+1)
+    def __init__(self, dim, target):
+        self.w = np.random.rand(dim)
         self.target = target
-#        self.w = np.zeros(dim+1)
+        self.classValue = 0
+        self.learns = 0
+
+        #lernrate:
+        self.nu = 0.05
+
+    def newIteration(self):
+        print("Adjusted weightvector: %d." % self.learns)
+        self.learns = 0
+
     def classify(self, x):
-        x = np.insert(x, 0, 1)
         self.classValue = np.dot(self.w, x)
-        return x, np.sign(self.classValue)
+        if self.classValue > 0:
+            return self.target
+        return -1
+
     def getClassValue(self):
         return self.classValue
     
@@ -44,12 +57,17 @@ class Perceptron:
     # @return False if the perceptron did not produce the desired output value, i.e. the learning adaptation has been performed
     #         True if the perceptron already produced the correct output value, i.e. no adaptation has been performed
     def learn(self, x, y):
-        x, yh = self.classify(x)
 
-        if(int(y) != int(yh)):
-            #lernrate:
-            nu = 0.01
-            self.w += nu*(y-self.classValue)*x
+        yh = self.classify(x)
+        #print("Target: ", self.target)
+        #print(x)
+        #print("Hypoth: ", yh)
+        #print("Real:   ", y)
+        #print("ClassV: ", self.classValue)
+        if int(y) != int(yh):
+            #print("Learn: ", np.multiply(self.nu*(1-self.classValue), x))
+            self.w += np.multiply(self.nu*(1-self.classValue), x)
+            self.learns += 1
             return False
         return True
 
