@@ -1,4 +1,5 @@
 import numpy as np
+import math
 
 class featureExtraction:
 
@@ -44,8 +45,8 @@ class featureExtraction:
         return [rpMaxX,rpMaxY,rpMinX,rpMinY]
 
     def normalizedDists(self,nrParts):
-
-        distributionX = self.distributionX[np.nonzero(self.distributionX)]
+        distributionX = np.copy(self.distributionX)
+        distributionX = distributionX[np.nonzero(distributionX)]
         #distributionX = np.divide(distributionX,np.max(distributionX))
 
 
@@ -64,7 +65,8 @@ class featureExtraction:
             startIndex = stopIndex
             stopIndex += int(lenX/nrParts)
 
-        distributionY = self.distributionY[np.nonzero(self.distributionY)]
+        distributionY = np.copy(self.distributionY)
+        distributionY = distributionY[np.nonzero(distributionY)]
         #distributionY = np.divide(distributionY,np.max(distributionY))
 
         sumY = np.sum(distributionY)
@@ -86,9 +88,6 @@ class featureExtraction:
         normDists.extend(normDistsY)
 
         return normDists
-    def numberDensity(self):
-        return
-
 
 
     """

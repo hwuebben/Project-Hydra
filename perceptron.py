@@ -10,6 +10,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import patches as patches
 import matplotlib
+import math
   
 
 def func(x, a, b):
@@ -48,10 +49,9 @@ class Perceptron:
     def learn(self, x, y):
         x, yh = self.classify(x)
 
-        if(int(y) != int(yh)):
+        if y != yh:
             # oldW = np.copy(self.w)
-            self.w += self.nu*(y-self.classValue)*x
-
+            self.w += self.nu*(y-yh)*x
             # for i,we in enumerate(oldW):
             #     change = abs(we - self.w[i])
             #     allowedChange = abs(we - we*(1+self.allowedRelChange))

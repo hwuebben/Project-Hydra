@@ -23,6 +23,7 @@ def getNextPic(fileName):
         numLines = sum(1 for _ in f)
     # Iterate over every line (sample)
     with open(fileName) as f:
+        f.s
         # Read comma-seperated-values
         content = csv.reader(f)
         # Iterate over every sample
@@ -43,8 +44,9 @@ def transform(rawData):
     features = []
     features.extend(fe.calcVar())
     #features.extend(fe.calcMinMax())
-    features.extend(fe.normalizedDists(10))
-
+    features.extend(fe.normalizedDists(2))
+    features.extend(fe.normalizedDists(3))
+    features.extend(fe.normalizedDists(5))
     return features
 
 """
@@ -102,7 +104,7 @@ if __name__ == "__main__":
     perceptrons = []
     #dreckiger trick um die ANzahl der Dimensionen nicht manuell eingeben zu muessen:
     nrDimensions = len(transform(np.arange(25).reshape(5,5)))
-    maxIterations = 20
+    maxIterations = 10
     for target in range(10):
         #initialiseren das Perceptron mit der Anzahl der features und der Zahl auf die traniert werden soll
         exec("p"+str(target)+" = Perceptron(nrDimensions,"+str(target)+")")
