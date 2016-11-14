@@ -42,7 +42,7 @@ def transform(rawData):
     fe = featureExtraction(rawData)
     features = []
     features.extend(fe.calcVar())
-    features.extend(fe.calcMinMax())
+    #features.extend(fe.calcMinMax())
     features.extend(fe.normalizedDists(10))
 
     return features
@@ -102,7 +102,7 @@ if __name__ == "__main__":
     perceptrons = []
     #dreckiger trick um die ANzahl der Dimensionen nicht manuell eingeben zu muessen:
     nrDimensions = len(transform(np.arange(25).reshape(5,5)))
-    maxIterations = 12
+    maxIterations = 20
     for target in range(10):
         #initialiseren das Perceptron mit der Anzahl der features und der Zahl auf die traniert werden soll
         exec("p"+str(target)+" = Perceptron(nrDimensions,"+str(target)+")")

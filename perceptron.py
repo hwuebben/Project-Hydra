@@ -99,7 +99,7 @@ class Perceptron:
                 if(not noAdapt):
                     cnt += 1
             self.allowedRelChange /= 2
-            self.nu /= 2
+            self.nu /= 1.5
 
             currentError,currentErrorRel = self.calcError(iterator, fileName, phi)
             print("currentErrorRel P", self.target, ": ", currentErrorRel)
