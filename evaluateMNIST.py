@@ -10,7 +10,7 @@ import numpy as np
 import csv
 from perceptron import Perceptron
 from featureExtraction import *
-
+import random
 
 """
 Iterator that yields all training data line-wise
@@ -23,7 +23,6 @@ def getNextPic(fileName):
         numLines = sum(1 for _ in f)
     # Iterate over every line (sample)
     with open(fileName) as f:
-        f.s
         # Read comma-seperated-values
         content = csv.reader(f)
         # Iterate over every sample
@@ -44,8 +43,9 @@ def transform(rawData):
     features = []
     features.extend(fe.calcVar())
     #features.extend(fe.calcMinMax())
-    features.extend(fe.normalizedDists(2))
+    features.extend(fe.normalizedcentroid())
     features.extend(fe.normalizedDists(3))
+    features.extend(fe.normalizedDists(4))
     features.extend(fe.normalizedDists(5))
     return features
 
@@ -65,7 +65,7 @@ def calculateError(fileName, perceptrons, phi):
     nrClass = np.zeros(10)
     for x, y in iterator:
         nrSamples[y] += 1
-        yh = classify(perceptrons,phi,x,y)
+        yh = classify(perceptrons,phi,x)
         nrClass[yh] += 1
         if y != yh:
             errors[y]+= 1
@@ -79,19 +79,21 @@ def calculateError(fileName, perceptrons, phi):
 
     return error/cnt
 
-def classify(perceptrons, phi, x,realy):
-    maxClassValue = -np.inf
+def classify(perceptrons, phi, x):
+    maxDist = -np.inf
     for y,perceptron in enumerate(perceptrons):
         _, yh = perceptron.classify(phi(x))
-        classValue = perceptron.getClassValue()
-        if classValue >= maxClassValue:
-            maxClassValue = classValue
+        dist = voteDist(perceptron.getClassValue(), perceptron.w)
+        if dist > maxDist:
+            maxDist = dist
             classification = y
-        #if(y == realy):
-            #print("Wert fuer richtiges P: ",classValue)
     return classification
 
-
+def voteDist(classValue,w):
+    n = w[1::]
+    nSize = np.sqrt(np.sum(np.square(n)))
+    d = classValue / nSize
+    return d
 
 
 
@@ -104,7 +106,7 @@ if __name__ == "__main__":
     perceptrons = []
     #dreckiger trick um die ANzahl der Dimensionen nicht manuell eingeben zu muessen:
     nrDimensions = len(transform(np.arange(25).reshape(5,5)))
-    maxIterations = 10
+    maxIterations = 30
     for target in range(10):
         #initialiseren das Perceptron mit der Anzahl der features und der Zahl auf die traniert werden soll
         exec("p"+str(target)+" = Perceptron(nrDimensions,"+str(target)+")")

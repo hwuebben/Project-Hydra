@@ -11,6 +11,7 @@ from matplotlib import pyplot as plt
 from matplotlib import patches as patches
 import matplotlib
 import math
+import random
   
 
 def func(x, a, b):
@@ -85,11 +86,18 @@ class Perceptron:
         cnt = 0
         iterations = 0
         self.pocketError = np.inf
+
+
+
         while(not done and iterations < maxIterations):
             done = True
             iterations += 1
             it = iterator(fileName)
             for el in it:
+                #test: zu 50% Datenpunkt ueberspringen
+                if random.uniform(0, 1) > 0.5:
+                    continue
+
                 if int(el[1]) != self.target:
                     y = -1
                 else:
@@ -99,7 +107,7 @@ class Perceptron:
                 if(not noAdapt):
                     cnt += 1
             self.allowedRelChange /= 2
-            self.nu /= 1.5
+            self.nu /= 1.3
 
             currentError,currentErrorRel = self.calcError(iterator, fileName, phi)
             print("currentErrorRel P", self.target, ": ", currentErrorRel)

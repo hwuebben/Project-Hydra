@@ -1,5 +1,6 @@
 import numpy as np
-import math
+import matplotlib
+
 
 class featureExtraction:
 
@@ -43,6 +44,28 @@ class featureExtraction:
         rpMinY = (argMinY - y0) / (y1-y0)
 
         return [rpMaxX,rpMaxY,rpMinX,rpMinY]
+    def normalizedcentroid(self):
+        distributionX = np.copy(self.distributionX)
+        distributionX = distributionX[np.nonzero(distributionX)]
+        sumX = np.sum(distributionX)
+        sum = 0
+        for i,x in enumerate(distributionX):
+            sum += x
+            if(sum >= sumX/2):
+                x_pos = i/len(distributionX)
+                break
+
+        distributionY = np.copy(self.distributionY)
+        distributionY = distributionY[np.nonzero(distributionY)]
+        sumY = np.sum(distributionY)
+        sum = 0
+        for i,y in enumerate(distributionY):
+            sum += y
+            if(sum >= sumY/2):
+                y_pos = i/len(distributionY)
+                break
+        return [x_pos,y_pos]
+
 
     def normalizedDists(self,nrParts):
         distributionX = np.copy(self.distributionX)
